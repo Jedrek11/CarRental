@@ -1,5 +1,4 @@
 from django.db import models
-from django.forms import ModelsForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -22,35 +21,36 @@ class Car(models.Model):
     brand = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     engine_type = models.CharField(max_length=20, choices=ENGINE_TYPES)
-    seats_count = models.PositiveSmallIntegerField()
+    seats_count = models.PositiveSmallIntegerField() 
     dors_count = models.PositiveSmallIntegerField()
     fuel_usage = models.FloatField()
     engine_power = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=20)
     equipment = models.ManyToManyField(Equipment)
-    gearbox_type = models.CharField(max_length=20, choices=ENGINE_TYPES)
+    gearbox_type = models.CharField(max_length=20, choices=GEARBOX_TYPES)
     available = models.BooleanField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     value = models.DecimalField(max_digits=10, decimal_places=2)
 
 class Address(models.Model):
+    user = models.OneToOneField(User, on_delete=models.RESTRICT)
     country = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     post_code = models.CharField(max_length=10)
     street = models.CharField(max_length=50)
-    building_no = models.CharField(max_length=20)
-    appartment_no = models.CharField(max_length=20)
+    building_no = models.CharField(max_length=10)
+    appartment_no = models.CharField(max_length=10)
 
 class User(User):
-    IDENTITY_DOCUMENT_TYPE = [
+    IDENTITY_DOCUMENT_TYPES = [
         ("dowod", "dowód osobisty"),
         ("paszport", "paszport"),
         ("prawo_jazdy", "prawo jazdy")
     ]
     phone = models.CharField(max_length=20)
-    identity_document_type = models.CharField(max_length=20, choices=IDENTITY_DOCUMENT_TYPE)
+    identity_document_type = models.CharField(max_length=20, choices=IDENTITY_DOCUMENT_TYPES)
     identity_document_no = models.CharField(max_length=20)
-    address = models.OneToOneField(Address, on_delete=models.RESTRICT)
+    # address = models.OneToOneField(Address, on_delete=models.RESTRICT)
 
 class Order(models.Model):
     PAYMENT_METHODS = [
@@ -68,16 +68,4 @@ class Order(models.Model):
     deposit = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
     payment_status = models.BooleanField()
-
-class RegistrationForm(ModelForm):
-    class Meta:
-        mode = User
-        exclude = ['id']
-        #fields = ['first_name', 'last_name', 'email', 'phone', 'address']
-
-class AddressForm(ModelForm):
-    class Meta:
-        mode = Address
-        exclude = ['id']
-        #fields = ['country', 'city', 'post_code', 'street', 'building_no', 'appartament_no']
-
+    
